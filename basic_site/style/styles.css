@@ -1,4 +1,14 @@
 
+@font-face {
+    font-family: 'AlbertSans';
+    src: url('../resources/AlbertSans-Regular.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: 'AlbertSans', sans-serif;
+}
 
 .person_card {
     display: flex;
@@ -49,7 +59,11 @@
 }
 
 #description {
-    font-size: 18px;
+    font-size: 15px;
     margin: 10px;
     flex-wrap: wrap;
+}
+
+#spacer {
+    margin: 10px;
 }
