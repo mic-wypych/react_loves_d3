@@ -6,6 +6,8 @@ const RHOMBUS_SIZE = 9;
 const LINE_LENGTH = 80;
 const LINE_COLOR = 'rgba(0, 0, 0, 0.25)';
 const RHOMBUS_COLOR = '#386641';
+const MOUSE_RADIUS = 80;   // px — how close the mouse needs to be
+const FLIP_COOLDOWN = 600; // ms — minimum time between direction flips
 
 function resize() {
     canvas.width = window.innerWidth;
@@ -13,6 +15,13 @@ function resize() {
 }
 resize();
 window.addEventListener('resize', resize);
+
+// Track mouse position
+const mouse = { x: -9999, y: -9999 };
+window.addEventListener('mousemove', e => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+});
 
 // Build lines - alternate direction, stagger starting positions
 const lines = Array.from({ length: LINE_COUNT }, (_, i) => {
@@ -23,6 +32,7 @@ const lines = Array.from({ length: LINE_COUNT }, (_, i) => {
             : canvas.height - Math.random() * canvas.height,
         speed: 0.8 + Math.random() * 1.2,
         dir,
+        lastFlip: 0,
     };
 });
 
@@ -57,6 +67,16 @@ function draw() {
 
         // rhombus at the leading end
         drawRhombus(x, line.y);
+
+        // flip direction if mouse is close to the rhombus
+        const dx = mouse.x - x;
+        const dy = mouse.y - line.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const now = performance.now();
+        if (dist < MOUSE_RADIUS && now - line.lastFlip > FLIP_COOLDOWN) {
+            line.dir *= -1;
+            line.lastFlip = now;
+        }
 
         // advance position
         line.y += line.speed * line.dir;
